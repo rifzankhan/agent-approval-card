@@ -53,6 +53,31 @@ export const Destructive: Story = {
   }
 };
 
+export const Approving: Story = {
+  args: {
+    status: 'approving',
+    action: {
+      title: 'Refund order and notify customer',
+      description: 'The agent wants to issue a refund through the payment provider.',
+      rationale: 'Support confirmed the shipment was lost and the refund is approved.',
+      riskLevel: 'high',
+      agentName: 'Support Agent'
+    },
+    arguments: {
+      customerId: 'cus_4821',
+      refundAmount: 199,
+      notifyCustomer: true
+    }
+  }
+};
+
+export const Rejecting: Story = {
+  args: {
+    ...Approving.args,
+    status: 'rejecting'
+  }
+};
+
 export const LongPayload: Story = {
   args: {
     action: {
