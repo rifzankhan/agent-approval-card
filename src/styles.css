@@ -13,7 +13,12 @@
   --agent-approval-secondary: #f4ede4;
   --agent-approval-secondary-hover: #e9dccd;
   --agent-approval-danger: #b5422c;
+  --agent-approval-danger-hover: #973625;
   --agent-approval-warning: #d27a17;
+  --agent-approval-textarea-bg: rgba(255, 255, 255, 0.72);
+  --agent-approval-textarea-border: rgba(81, 55, 24, 0.14);
+  --agent-approval-textarea-bg-dark: #1a1d1e;
+  --agent-approval-textarea-border-dark: #363a3c;
   --agent-approval-focus: 0 0 0 3px rgba(30, 143, 103, 0.2);
 }
 
@@ -39,6 +44,8 @@
   --agent-approval-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
   --agent-approval-secondary: #2a2f30;
   --agent-approval-secondary-hover: #353b3c;
+  --agent-approval-textarea-bg: var(--agent-approval-textarea-bg-dark);
+  --agent-approval-textarea-border: var(--agent-approval-textarea-border-dark);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -96,6 +103,30 @@
 .agent-approval-card__argument-row dd {
   font-size: 0.97rem;
   line-height: 1.6;
+}
+
+.agent-approval-card__description {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.agent-approval-card__description--warning {
+  color: #ffd4a4;
+}
+
+.agent-approval-card__warning-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 1.35rem;
+  border-radius: 999px;
+  background: rgba(210, 122, 23, 0.22);
+  color: #ffcf8a;
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .agent-approval-card__description,
@@ -180,10 +211,12 @@
 
 .agent-approval-card__argument-row dt {
   min-width: 7rem;
-  font-weight: 700;
+  color: #a1a1aa;
+  font-weight: 600;
 }
 
 .agent-approval-card__argument-row dd {
+  color: var(--agent-approval-text);
   margin: 0;
   text-align: right;
   white-space: pre-wrap;
@@ -213,6 +246,15 @@
   background: var(--agent-approval-primary-hover);
 }
 
+.agent-approval-card__button--danger {
+  background: var(--agent-approval-danger);
+  color: white;
+}
+
+.agent-approval-card__button--danger:hover:not(:disabled) {
+  background: var(--agent-approval-danger-hover);
+}
+
 .agent-approval-card__button--secondary {
   background: var(--agent-approval-secondary);
   color: var(--agent-approval-text);
@@ -225,13 +267,20 @@
 .agent-approval-card__text-button {
   padding: 0;
   background: transparent;
-  color: var(--agent-approval-primary);
-  font-weight: 700;
+  color: var(--agent-approval-muted);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
 }
 
 .agent-approval-card__button:hover:not(:disabled),
 .agent-approval-card__text-button:hover:not(:disabled) {
   transform: translateY(-1px);
+}
+
+.agent-approval-card__text-button:hover:not(:disabled) {
+  color: var(--agent-approval-text);
 }
 
 .agent-approval-card__button:disabled,
@@ -245,32 +294,54 @@
 .agent-approval-card__text-button:focus-visible,
 .agent-approval-card__textarea:focus-visible {
   outline: none;
+  border-color: rgba(30, 143, 103, 0.45);
   box-shadow: var(--agent-approval-focus);
 }
 
 .agent-approval-card__textarea {
   width: 100%;
   padding: 0.85rem 1rem;
-  border: 1px solid var(--agent-approval-border);
+  border: 1px solid var(--agent-approval-textarea-border);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--agent-approval-textarea-bg);
   color: var(--agent-approval-text);
   font: 0.94rem/1.6 "IBM Plex Mono", "Cascadia Code", monospace;
   resize: vertical;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
 @media (prefers-color-scheme: dark) {
   .agent-approval-card--theme-system .agent-approval-card__textarea {
-    background: rgba(8, 10, 10, 0.65);
+    background: var(--agent-approval-textarea-bg-dark);
+    border-color: var(--agent-approval-textarea-border-dark);
   }
 }
 
 .agent-approval-card--theme-dark .agent-approval-card__textarea {
-  background: rgba(8, 10, 10, 0.65);
+  background: var(--agent-approval-textarea-bg-dark);
+  border-color: var(--agent-approval-textarea-border-dark);
 }
 
 .agent-approval-card__textarea--reason {
   font-family: var(--agent-approval-font);
+}
+
+.agent-approval-card__textarea::placeholder {
+  color: rgba(112, 84, 59, 0.82);
+}
+
+@media (prefers-color-scheme: dark) {
+  .agent-approval-card--theme-system .agent-approval-card__textarea::placeholder {
+    color: rgba(195, 182, 168, 0.72);
+  }
+}
+
+.agent-approval-card--theme-dark .agent-approval-card__textarea::placeholder {
+  color: rgba(195, 182, 168, 0.72);
+}
+
+.agent-approval-card__textarea:hover {
+  border-color: rgba(255, 212, 164, 0.28);
 }
 
 .agent-approval-card__error {

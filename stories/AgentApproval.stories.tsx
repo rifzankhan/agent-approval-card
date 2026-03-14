@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AgentApproval } from '../src/AgentApproval';
+import type { ApprovalStatus, JsonObject } from '../src/types';
 import '../src/styles.css';
 
 const meta = {
@@ -111,5 +113,52 @@ export const Editing: Story = {
 export const Approved: Story = {
   args: {
     status: 'approved'
+  }
+};
+
+export const InteractiveDemo: Story = {
+  args: {
+    action: {
+      title: 'Delete invoice and refund payment',
+      description: 'This cannot be reversed once the transaction clears.',
+      rationale: 'The invoice was generated in error and support confirmed the refund request.',
+      riskLevel: 'destructive',
+      agentName: 'Finance Agent',
+      requiresReason: true
+    },
+    arguments: {
+      invoiceId: 'inv_103',
+      refundAmount: 199,
+      currency: 'USD'
+    },
+    status: 'idle',
+    editable: true
+  },
+  render: (args) => {
+    const [status, setStatus] = useState<ApprovalStatus>('idle');
+    const [currentArgs, setCurrentArgs] = useState<JsonObject>(args.arguments);
+
+    return (
+      <AgentApproval
+        {...args}
+        arguments={currentArgs}
+        status={status}
+        onApprove={async (nextArgs) => {
+          setCurrentArgs(nextArgs);
+          setStatus('approving');
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          setStatus('approved');
+        }}
+        onReject={async () => {
+          setStatus('rejecting');
+          await new Promise((resolve) => setTimeout(resolve, 900));
+          setStatus('rejected');
+        }}
+        onEdit={async (nextArgs) => {
+          setCurrentArgs(nextArgs);
+          setStatus('idle');
+        }}
+      />
+    );
   }
 };

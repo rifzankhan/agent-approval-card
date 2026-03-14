@@ -103,6 +103,7 @@ export function AgentApproval({
   }, [status]);
 
   const riskLevel = action.riskLevel ?? 'medium';
+  const isDangerous = riskLevel === 'high' || riskLevel === 'destructive';
   const busy = status === 'approving' || status === 'rejecting';
   const disableActions = busy || status === 'approved' || status === 'rejected';
 
@@ -175,7 +176,19 @@ export function AgentApproval({
           </p>
           <h2 className="agent-approval-card__title">{action.title}</h2>
           {action.description ? (
-            <p className="agent-approval-card__description">{action.description}</p>
+            <p
+              className={joinClassNames(
+                'agent-approval-card__description',
+                isDangerous && 'agent-approval-card__description--warning'
+              )}
+            >
+              {isDangerous ? (
+                <span className="agent-approval-card__warning-icon" aria-hidden="true">
+                  !
+                </span>
+              ) : null}
+              <span>{action.description}</span>
+            </p>
           ) : null}
         </div>
         <div className="agent-approval-card__badges">
@@ -293,13 +306,18 @@ export function AgentApproval({
           type="button"
           className="agent-approval-card__button agent-approval-card__button--secondary"
           onClick={handleReject}
-          disabled={disableActions || (action.requiresReason && rejectionReason.trim().length === 0)}
+          disabled={disableActions}
         >
           {status === 'rejecting' ? 'Rejecting...' : mergedLabels.reject}
         </button>
         <button
           type="button"
-          className="agent-approval-card__button agent-approval-card__button--primary"
+          className={joinClassNames(
+            'agent-approval-card__button',
+            isDangerous
+              ? 'agent-approval-card__button--danger'
+              : 'agent-approval-card__button--primary'
+          )}
           onClick={handleApprove}
           disabled={disableActions || isEditing || Boolean(editorError)}
         >

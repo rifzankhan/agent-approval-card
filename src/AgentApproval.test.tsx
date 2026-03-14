@@ -92,17 +92,25 @@ describe('AgentApproval', () => {
     expect(screen.getByText('Parameters must be valid JSON objects.')).toBeInTheDocument();
   });
 
-  it('requires a rejection reason when specified', () => {
+  it('allows instant rejection even when a reason is requested', () => {
     const onReject = vi.fn();
     render(<AgentApproval {...baseProps} onReject={onReject} />);
 
     const rejectButton = screen.getByRole('button', { name: 'Reject' });
-    expect(rejectButton).toBeDisabled();
+    expect(rejectButton).toBeEnabled();
+
+    fireEvent.click(rejectButton);
+    expect(onReject).toHaveBeenCalledWith(undefined);
+  });
+
+  it('sends a rejection reason when provided', () => {
+    const onReject = vi.fn();
+    render(<AgentApproval {...baseProps} onReject={onReject} />);
 
     fireEvent.change(screen.getByLabelText('Reason for rejection'), {
       target: { value: 'Needs legal review first.' }
     });
-    fireEvent.click(rejectButton);
+    fireEvent.click(screen.getByRole('button', { name: 'Reject' }));
 
     expect(onReject).toHaveBeenCalledWith('Needs legal review first.');
   });
