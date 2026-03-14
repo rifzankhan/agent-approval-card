@@ -1,42 +1,59 @@
 # Agent Approval Card
 
-A polished React component for human-in-the-loop approval flows in AI apps.
+A React component for human-in-the-loop approval flows in AI apps.
 
-`AgentApproval` is built for the gap most agent frameworks leave to the frontend: showing a proposed action, its parameters, and a clear approval decision without forcing you into a backend protocol or queue implementation.
+`AgentApproval` is built for the frontend gap most agent frameworks leave behind: the moment when an agent wants to do something risky, expensive, or irreversible, and a human needs to review it before it happens.
 
-## What it does
+It gives you a clean approval UI without forcing a queue system, backend protocol, or orchestration model.
 
-- Renders an approval card for an agent-proposed action
-- Explains the action with title, description, and explicit rationale
-- Highlights risk level for sensitive or irreversible operations
-- Supports `Approve`, `Reject`, and inline `Edit Parameters`
-- Keeps workflow state controlled by the host app
-- Ships with default CSS and theme variables
+## Why this exists
 
-## What it does not do
+Most agent frameworks help with backend pause-and-resume logic. Very few give you a reusable approval interface that is good enough to drop into a real product.
 
-This package is intentionally scoped to the UI layer.
+This package focuses on that missing layer:
+
+- explain what the agent wants to do
+- show the exact parameters it plans to use
+- let a human approve, reject, or edit those parameters
+- surface risk clearly for destructive actions
+
+## What you get
+
+- A polished `<AgentApproval />` React component
+- Controlled async workflow owned by the host app
+- Explicit rationale support so the card can explain intent
+- Risk-level styling for sensitive actions
+- Inline JSON-object editing for v1 parameter review
+- Bundled CSS with theme variables
+- TypeScript-first API
+
+## What it intentionally does not do
+
+This package is only the UI layer.
 
 - It does not pause or resume agents
 - It does not manage approval queues
-- It does not persist decisions or audit logs
-- It does not define a backend transport contract
+- It does not persist decisions
+- It does not enforce audit logging
+- It does not define a transport contract between frontend and backend
 
-The host app owns async state, side effects, security checks, and irreversible-action enforcement.
+The host application owns execution, persistence, security checks, retries, and irreversible-action safeguards.
+
+## Good fit for
+
+- agent dashboards
+- internal ops tools
+- approval steps before payments, emails, deletions, or external API calls
+- LangGraph, CopilotKit, custom tool-calling agents, or any app with a pending-action review step
 
 ## Install
 
 ```bash
 pnpm add agent-approval-card
-```
-
-You also need compatible React peer dependencies:
-
-```bash
 pnpm add react react-dom
 ```
 
-## Usage
+## Quick Start
 
 ```tsx
 import { useState } from 'react';
@@ -98,7 +115,19 @@ async function submitRejection(reason?: string) {
 }
 ```
 
-## API
+## Design Rules
+
+The v1 API is intentionally strict:
+
+- the host owns approval state and all async side effects
+- the component owns only temporary UI draft state while editing
+- parameters are treated as a JSON object, not a schema-driven form system
+- `onEdit` fires only when the user explicitly applies changes
+- `onApprove` receives the latest applied argument object
+
+That keeps the component easy to adopt and avoids locking the library into a backend-specific workflow too early.
+
+## API Overview
 
 ### `AgentApproval`
 
@@ -131,17 +160,6 @@ Core props:
 'idle' | 'approving' | 'rejecting' | 'editing' | 'error' | 'approved' | 'rejected'
 ```
 
-## Editing behavior
-
-Parameter editing is intentionally generic in v1:
-
-- The component treats `arguments` as a JSON object
-- Edit mode uses a temporary local draft inside the component
-- `onEdit` fires only when the user explicitly applies the edited object
-- `onApprove` receives the latest applied parameter object
-
-This keeps the API stable without locking the library into a schema-driven form system too early.
-
 ## Styling
 
 Import the bundled stylesheet once:
@@ -150,7 +168,7 @@ Import the bundled stylesheet once:
 import 'agent-approval-card/styles.css';
 ```
 
-The default theme is driven by CSS custom properties, so you can override the visual system without rewriting the component:
+The component uses CSS custom properties so you can change the visual language without rewriting its structure:
 
 ```css
 :root {
@@ -160,14 +178,14 @@ The default theme is driven by CSS custom properties, so you can override the vi
 }
 ```
 
-## Local development
+## Local Development
 
 ```bash
 pnpm install
 pnpm storybook
 ```
 
-Other useful commands:
+Useful commands:
 
 ```bash
 pnpm example
@@ -177,11 +195,17 @@ pnpm build
 pnpm pack:check
 ```
 
-## Publishing checklist
+## Repo Status
 
-Before publishing publicly, confirm:
+This is a tightly scoped early version. The current goal is to make the approval card solid and reusable before expanding into headless state, queue primitives, or framework-specific adapters.
 
-- the npm package name is available
-- `package.json` has your final repository metadata
-- Storybook and the example app reflect your preferred branding
-- the generated `dist/` contents are what you want to ship
+## Contributing
+
+Contributions are welcome, especially around:
+
+- UX polish for risky/destructive actions
+- accessibility improvements
+- better parameter-editing ergonomics
+- docs and real-world examples
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
