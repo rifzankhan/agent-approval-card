@@ -1,6 +1,6 @@
 {
   "name": "agent-approval-card",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A polished React approval card for human-in-the-loop agent actions.",
   "author": "rifzan",
   "type": "module",

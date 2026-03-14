@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AgentApproval } from './AgentApproval';
 import type { AgentApprovalProps } from './types';
@@ -103,6 +103,12 @@ describe('AgentApproval', () => {
     expect(onReject).toHaveBeenCalledWith(undefined);
   });
 
+  it('shows optional rejection copy', () => {
+    render(<AgentApproval {...baseProps} />);
+
+    expect(screen.getByPlaceholderText('Reason for rejection (optional)')).toBeInTheDocument();
+  });
+
   it('sends a rejection reason when provided', () => {
     const onReject = vi.fn();
     render(<AgentApproval {...baseProps} onReject={onReject} />);
@@ -121,4 +127,26 @@ describe('AgentApproval', () => {
     expect(screen.getByRole('button', { name: 'Approving...' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Reject' })).toBeDisabled();
   });
+
+  it.each([
+    ['approved', 'Approved'],
+    ['rejected', 'Rejected']
+  ] as const)(
+    'locks the %s state behind a single confirmation block',
+    (status, terminalLabel) => {
+      render(<AgentApproval {...baseProps} status={status} />);
+
+      expect(screen.queryByRole('button', { name: 'Approve' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Edit Parameters' })).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Reason for rejection')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('status')).toHaveLength(1);
+
+      const terminalBlock = screen.getByRole('status');
+      expect(within(terminalBlock).getByText(terminalLabel)).toBeInTheDocument();
+      expect(
+        within(terminalBlock).getByText('This decision is locked and can no longer be changed.')
+      ).toBeInTheDocument();
+    }
+  );
 });

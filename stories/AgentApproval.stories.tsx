@@ -118,19 +118,6 @@ export const Approved: Story = {
 
 export const InteractiveDemo: Story = {
   args: {
-    action: {
-      title: 'Delete invoice and refund payment',
-      description: 'This cannot be reversed once the transaction clears.',
-      rationale: 'The invoice was generated in error and support confirmed the refund request.',
-      riskLevel: 'destructive',
-      agentName: 'Finance Agent',
-      requiresReason: true
-    },
-    arguments: {
-      invoiceId: 'inv_103',
-      refundAmount: 199,
-      currency: 'USD'
-    },
     status: 'idle',
     editable: true
   },

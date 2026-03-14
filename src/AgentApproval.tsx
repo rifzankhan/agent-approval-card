@@ -35,6 +35,8 @@ const STATUS_COPY = {
   error: 'Error'
 } as const;
 
+const TERMINAL_STATUS_DESCRIPTION = 'This decision is locked and can no longer be changed.';
+
 function joinClassNames(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(' ');
 }
@@ -104,8 +106,9 @@ export function AgentApproval({
 
   const riskLevel = action.riskLevel ?? 'medium';
   const isDangerous = riskLevel === 'high' || riskLevel === 'destructive';
+  const isTerminal = status === 'approved' || status === 'rejected';
   const busy = status === 'approving' || status === 'rejecting';
-  const disableActions = busy || status === 'approved' || status === 'rejected';
+  const disableActions = busy || isTerminal;
 
   const handleApprove = async () => {
     if (disableActions || editorError) {
@@ -213,7 +216,7 @@ export function AgentApproval({
       <div className="agent-approval-card__section">
         <div className="agent-approval-card__section-heading">
           <p className="agent-approval-card__section-label">{mergedLabels.parameters}</p>
-          {editable && !isEditing ? (
+          {editable && !isEditing && !isTerminal ? (
             <button
               type="button"
               className="agent-approval-card__text-button"
@@ -273,7 +276,7 @@ export function AgentApproval({
         )}
       </div>
 
-      {action.requiresReason ? (
+      {action.requiresReason && !isTerminal ? (
         <div className="agent-approval-card__section">
           <label htmlFor={reasonId} className="agent-approval-card__section-label">
             {mergedLabels.rejectionReason}
@@ -284,7 +287,8 @@ export function AgentApproval({
             value={rejectionReason}
             onChange={(event) => setRejectionReason(event.target.value)}
             rows={3}
-            placeholder="Required before rejecting"
+            placeholder="Reason for rejection (optional)"
+            disabled={busy}
           />
         </div>
       ) : null}
@@ -294,35 +298,48 @@ export function AgentApproval({
           {mergedLabels.statusError}
         </p>
       ) : null}
-      {status === 'approved' ? (
-        <p className="agent-approval-card__success">{mergedLabels.statusApproved}</p>
-      ) : null}
-      {status === 'rejected' ? (
-        <p className="agent-approval-card__muted">{mergedLabels.statusRejected}</p>
-      ) : null}
 
-      <footer className="agent-approval-card__actions">
-        <button
-          type="button"
-          className="agent-approval-card__button agent-approval-card__button--secondary"
-          onClick={handleReject}
-          disabled={disableActions}
-        >
-          {status === 'rejecting' ? 'Rejecting...' : mergedLabels.reject}
-        </button>
-        <button
-          type="button"
-          className={joinClassNames(
-            'agent-approval-card__button',
-            isDangerous
-              ? 'agent-approval-card__button--danger'
-              : 'agent-approval-card__button--primary'
-          )}
-          onClick={handleApprove}
-          disabled={disableActions || isEditing || Boolean(editorError)}
-        >
-          {status === 'approving' ? 'Approving...' : mergedLabels.approve}
-        </button>
+      <footer className="agent-approval-card__footer">
+        {isTerminal ? (
+          <div
+            className={joinClassNames(
+              'agent-approval-card__terminal-state',
+              `agent-approval-card__terminal-state--${status}`
+            )}
+            role="status"
+          >
+            <p className="agent-approval-card__terminal-title">
+              {status === 'approved' ? mergedLabels.statusApproved : mergedLabels.statusRejected}
+            </p>
+            <p className="agent-approval-card__terminal-description">
+              {TERMINAL_STATUS_DESCRIPTION}
+            </p>
+          </div>
+        ) : (
+          <div className="agent-approval-card__actions">
+            <button
+              type="button"
+              className="agent-approval-card__button agent-approval-card__button--secondary"
+              onClick={handleReject}
+              disabled={disableActions}
+            >
+              {status === 'rejecting' ? 'Rejecting...' : mergedLabels.reject}
+            </button>
+            <button
+              type="button"
+              className={joinClassNames(
+                'agent-approval-card__button',
+                isDangerous
+                  ? 'agent-approval-card__button--danger'
+                  : 'agent-approval-card__button--primary'
+              )}
+              onClick={handleApprove}
+              disabled={disableActions || isEditing || Boolean(editorError)}
+            >
+              {status === 'approving' ? 'Approving...' : mergedLabels.approve}
+            </button>
+          </div>
+        )}
       </footer>
     </section>
   );
