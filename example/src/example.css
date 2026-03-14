@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(30, 143, 103, 0.2), transparent 28%),
+    linear-gradient(135deg, #f4e8d4, #e7d8c3 55%, #f8efe7);
+  color: #1c130b;
+  font-family: "Fraunces", Georgia, serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.example-shell {
+  display: grid;
+  place-items: center;
+  gap: 1.5rem;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.example-shell__intro {
+  text-align: center;
+}
+
+.example-shell__intro p {
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font: 700 0.75rem/1.4 "Inter Tight", "Segoe UI", sans-serif;
+  color: rgba(28, 19, 11, 0.7);
+}
+
+.example-shell__intro h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+}
