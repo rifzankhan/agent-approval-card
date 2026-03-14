@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "A polished React approval card for human-in-the-loop agent actions.",
   "author": "rifzan",
-  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.18.3",
   "homepage": "https://github.com/rifzankhan/agent-approval-card#readme",
@@ -12,8 +11,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "README.md"
   ],
   "exports": {
     ".": {

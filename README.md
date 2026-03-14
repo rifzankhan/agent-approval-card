@@ -185,7 +185,3 @@ Before publishing publicly, confirm:
 - `package.json` has your final repository metadata
 - Storybook and the example app reflect your preferred branding
 - the generated `dist/` contents are what you want to ship
-
-## License
-
-MIT
